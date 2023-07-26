@@ -1,0 +1,114 @@
+
+
+.register {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+     
+ 
+     & &__container{
+         flex-direction: column;
+         gap: 20px;
+         width: 380px;
+         height: 650px;
+         background: #f0f0f0;
+         border-radius: 13px;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         -webkit-box-shadow: 12px 14px 24px 3px rgba(27, 27, 27, 1);
+         -moz-box-shadow: 12px 14px 24px 3px rgba(27, 27, 27, 1);
+         box-shadow: 12px 14px 24px 3px rgba(27, 27, 27, 1);
+     }
+ 
+     input[type=text] ,input[type=password]{
+         border: none;
+         padding: 10px 30px;
+         border-radius: 4px;
+         border: 1px solid rgba(196, 196, 196, 0.692);
+     }
+ 
+     & &__input-container{
+         display: flex;
+         justify-content: center;
+         flex-direction: column;
+         align-items: center;
+         margin: 8px 0;
+     }
+ 
+      & &__input-label{
+         justify-content: flex-start;
+         width: 100%;
+      }
+ 
+     & &__elements{
+         display: flex;
+         flex-direction: column;
+ 
+         h1{
+             text-align: center;
+             margin-bottom: 8px;
+         }
+ 
+         h3{
+             margin-bottom: 5px;
+             font-size: 1rem;
+             
+         }
+ 
+         button{
+             margin-top: 20px;
+             width: 100%;
+             padding: 10px 0px;
+             border: none;
+             background: rgb(53, 53, 53);
+             border-radius: 4px;
+             color: #fff;
+             text-transform: uppercase;
+             cursor: pointer;
+             font-weight: bold;
+             -webkit-box-shadow: 18px 12px 25px -10px rgba(17, 17, 17, 1);
+             -moz-box-shadow: 18px 12px 25px -10px rgba(17, 17, 17, 1);
+             box-shadow: 18px 12px 25px -10px rgba(17, 17, 17, 1);
+             transition: 0.2s ease;  
+         }
+ 
+         button:hover{
+             background: #1c9092;
+             transition: 0.2s ease;  
+         }
+ 
+        
+     }
+
+     & &__response{
+        text-align: center;
+        font-size: 0.9rem;
+        width: 80%;
+     }
+ 
+     & &__register-href{
+         margin-top: 25px;
+         font-size: 0.8rem;
+         text-align: center;
+ 
+         span {
+             font-weight: bold;
+         }
+ 
+         a{
+             text-decoration: none;
+             color: rgb(53, 53, 53);
+             transition: 0.2s ease;  
+         }
+ 
+         a:hover{
+             color: #1c9092;
+             transition: 0.2s ease;  
+         }
+     }
+ 
+    
+ }
