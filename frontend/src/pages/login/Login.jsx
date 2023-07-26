@@ -1,6 +1,7 @@
 import { React, useState, useEffect } from "react";
 import "./Login.scss";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [inputs, setInputs] = useState({
@@ -18,6 +19,8 @@ const Login = () => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const navigate = useNavigate();
+
   const handleClick = async (e) => {
     e.preventDefault();
 
@@ -30,6 +33,7 @@ const Login = () => {
         }
       );
       setCurrentUser(response.data);
+      navigate("/");
 
       setErr(null);
     } catch (err) {

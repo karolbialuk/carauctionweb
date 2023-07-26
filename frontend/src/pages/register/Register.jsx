@@ -1,6 +1,7 @@
 import { React, useState } from "react";
 import "./Register.scss";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -9,6 +10,8 @@ const Register = () => {
     username: "",
     email: "",
   });
+
+  const navigate = useNavigate();
 
   const [err, setErr] = useState(null);
   const [response, setResponse] = useState(null);
@@ -28,6 +31,7 @@ const Register = () => {
 
       setResponse(response.data);
       setErr(null);
+      navigate("/login");
     } catch (err) {
       setErr(err.response.data);
       setResponse(null);
