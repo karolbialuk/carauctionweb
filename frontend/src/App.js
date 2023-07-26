@@ -8,6 +8,7 @@ import {
 import Register from './pages/register/Register'
 import Login from './pages/login/Login'
 import Home from './components/home/Home'
+import Navbar from './components/navar/Navbar'
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState(
@@ -17,7 +18,10 @@ const App = () => {
   const Layout = () => {
     return (
       <div>
-        <Outlet />
+        <Navbar />
+        <div style={{ display: 'flex' }}>
+          <Outlet />
+        </div>
       </div>
     )
   }
