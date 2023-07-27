@@ -9,12 +9,9 @@ import Register from './pages/register/Register'
 import Login from './pages/login/Login'
 import Home from './components/home/Home'
 import Navbar from './components/navar/Navbar'
+import './style.scss'
 
 const App = () => {
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem('user')) || null,
-  )
-
   const Layout = () => {
     return (
       <div>
@@ -27,7 +24,7 @@ const App = () => {
   }
 
   const ProtectedRoute = ({ children }) => {
-    if (!currentUser) {
+    if (!localStorage.getItem('user')) {
       return <Navigate to="/login" />
     }
     return children

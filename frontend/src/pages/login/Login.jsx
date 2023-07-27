@@ -32,10 +32,11 @@ const Login = () => {
           withCredentials: true,
         }
       );
+
       setCurrentUser(response.data);
-      navigate("/");
 
       setErr(null);
+      navigate("/");
     } catch (err) {
       setErr(err.response.data);
     }
