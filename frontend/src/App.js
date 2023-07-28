@@ -5,21 +5,27 @@ import {
   Outlet,
   Navigate,
 } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Register from './pages/register/Register'
 import Login from './pages/login/Login'
+import AddAuction from './pages/addAuction/AddAuction'
 import Home from './components/home/Home'
-import Navbar from './components/navar/Navbar'
+import Navbar from './components/navbar/Navbar'
 import './style.scss'
 
 const App = () => {
+  const queryClient = new QueryClient()
+
   const Layout = () => {
     return (
-      <div>
-        <Navbar />
-        <div style={{ display: 'flex' }}>
-          <Outlet />
+      <QueryClientProvider client={queryClient}>
+        <div>
+          <Navbar />
+          <div style={{ display: 'flex' }}>
+            <Outlet />
+          </div>
         </div>
-      </div>
+      </QueryClientProvider>
     )
   }
 
@@ -42,6 +48,10 @@ const App = () => {
         {
           path: '/',
           element: <Home />,
+        },
+        {
+          path: '/addauction',
+          element: <AddAuction />,
         },
       ],
     },
