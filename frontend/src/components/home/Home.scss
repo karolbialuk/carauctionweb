@@ -10,5 +10,8 @@
 
     & &__container{
         width: 75%;
+        display: flex;
+        gap: 3vw;
+        margin: 20px 0;
     }
 }

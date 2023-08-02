@@ -1,0 +1,136 @@
+body{
+  overflow-x: hidden;
+}
+
+.auction{
+    display: flex;
+    justify-content: center ;
+    width: 100%;
+
+    & &__container{
+        width: 75%;
+        margin: 20px 0;
+
+        h1{
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        h2{
+            margin: 10px 0;
+            font-size: 1.1rem;
+            font-weight: 100;
+            margin-bottom: 15px;
+        }
+    }
+
+  & &__img-container{
+    width: 100%;
+    display: flex;
+    gap: 5px;
+  }
+
+  & &__big-img{
+    width: 70%;
+   
+
+
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+  }
+
+  & &__small-imgs{
+    width: 30%;
+    
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row-gap: 5px;
+    grid-column-gap: 5px;
+
+
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+  }
+
+  & &__info-table{
+    width: 80%;
+    margin-top: 35px;
+  }
+
+  table {
+   
+    border-radius: 1em;
+   
+  }
+
+
+  table.customTable {
+    width: 100%;
+    background-color: #FFFFFF;
+    border-collapse: collapse;
+    border-width: 1px;
+    border-color: #c5c5c588;
+    border-style: solid;
+    color: #000000;
+
+  }
+  
+  table.customTable td, table.customTable th {
+    border-width: 1px;
+    border-color: #c5c5c5b4;
+    border-style: solid;
+    padding: 10px;
+  }
+
+  & &__first-row{
+    background: rgba(192, 192, 192, 0.329);
+  }
+
+  & &__bottom-container{
+    display: flex;
+    gap: 25px;
+  }
+
+  & &__description{
+    h1{
+      margin-top: 30px;
+    }
+
+    p{
+      text-align: justify;
+    }
+  }
+
+  & &__highlights{
+    h1{
+      margin-top: 30px;
+    }
+
+   
+  }
+  & &__equipment{
+    h1{
+      margin-top: 30px;
+    }
+
+    
+  }
+
+  & &__flaws{
+    h1{
+      margin-top: 30px;
+    }
+
+   
+  }
+  
+}
+

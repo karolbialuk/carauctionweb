@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Register from './pages/register/Register'
 import Login from './pages/login/Login'
 import AddAuction from './pages/addAuction/AddAuction'
+import Auction from './pages/auction/Auction'
 import Home from './components/home/Home'
 import Navbar from './components/navbar/Navbar'
 import './style.scss'
@@ -52,6 +53,10 @@ const App = () => {
         {
           path: '/addauction',
           element: <AddAuction />,
+        },
+        {
+          path: '/auction/:id',
+          element: <Auction />,
         },
       ],
     },
