@@ -24,6 +24,11 @@ const Navbar = () => {
               <Link to="/addauction">Wystaw auto</Link>
             </h3>
           </div>
+          <div>
+            <h3>
+              <Link to="/myauctions">Moje aukcje</Link>
+            </h3>
+          </div>
         </div>
         <div className="navbar__right-content">
           <input type="text" placeholder="Wyszukaj auto" />

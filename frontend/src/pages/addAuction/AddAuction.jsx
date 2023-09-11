@@ -1,5 +1,6 @@
 import { React, useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import "./AddAuction.scss";
 
@@ -25,8 +26,6 @@ const AddAuction = () => {
     equipment: "",
     flaws: "",
   });
-
-  console.log(inputs);
 
   const [err, setErr] = useState(null);
   const [response, setResponse] = useState(null);
@@ -57,6 +56,33 @@ const AddAuction = () => {
     document.getElementById("equipmentInput").value = "";
   };
 
+  const removeHighlights = (e) => {
+    e.preventDefault();
+    const value = e.target.innerHTML;
+    setInputs((prev) => ({
+      ...prev,
+      highlights: prev.highlights.filter((item) => item !== value),
+    }));
+  };
+
+  const removeEquipment = (e) => {
+    e.preventDefault();
+    const value = e.target.innerHTML;
+    setInputs((prev) => ({
+      ...prev,
+      equipment: prev.equipment.filter((item) => item !== value),
+    }));
+  };
+
+  const removeFlaws = (e) => {
+    e.preventDefault();
+    const value = e.target.innerHTML;
+    setInputs((prev) => ({
+      ...prev,
+      flaws: prev.flaws.filter((item) => item !== value),
+    }));
+  };
+
   const flawsAdd = (e) => {
     const inputValue = document.getElementById("flawsInput").value;
     setInputs((prev) => ({
@@ -66,23 +92,34 @@ const AddAuction = () => {
     document.getElementById("flawsInput").value = "";
   };
 
-  console.log(inputs);
-
   const handleClick = async (e) => {
     e.preventDefault();
 
     try {
-      const data = Object.values(inputs).includes("")
-        ? ""
-        : await handleUpload();
+      // const data = Object.values(inputs).includes("")
+      //   ? ""
+      //   : await handleUpload();
 
-      console.log({ ez: data });
+      // console.log({ ez: data });
+
+      const updatedFormData = new FormData();
+
+      for (const key in inputs) {
+        updatedFormData.append(key, inputs[key]);
+      }
+
+      for (let i = 0; i < files.length; i++) {
+        updatedFormData.append("images", files[i]);
+      }
 
       const res = await axios.post(
         "http://localhost:8800/api/auctions",
-        { ...inputs, img: data },
+        updatedFormData,
         {
           withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
       setErr(null);
@@ -94,23 +131,28 @@ const AddAuction = () => {
     }
   };
 
-  const handleUpload = async () => {
-    try {
-      const formData = new FormData();
-      for (let i = 0; i < files.length; i++) {
-        formData.append("images", files[i]);
-      }
-
-      const response = await axios.post(
-        "http://localhost:8800/api/upload",
-        formData
-      );
-
-      return response.data.uploadedFiles.join(",");
-    } catch (error) {
-      console.error("Error uploading files:", error);
-    }
+  const handleFileChange = (e) => {
+    const selectedFiles = e.target.files;
+    setFiles([...selectedFiles]);
   };
+
+  // const handleUpload = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     for (let i = 0; i < files.length; i++) {
+  //       formData.append("images", files[i]);
+  //     }
+
+  //     const response = await axios.post(
+  //       "http://localhost:8800/api/upload",
+  //       formData
+  //     );
+
+  //     return response.data.uploadedFiles.join(",");
+  //   } catch (error) {
+  //     console.error("Error uploading files:", error);
+  //   }
+  // };
 
   const fetchBrands = async () => {
     try {
@@ -139,11 +181,6 @@ const AddAuction = () => {
     } catch (err) {
       console.log(err);
     }
-  };
-
-  const handleFileChange = (e) => {
-    const selectedFiles = e.target.files;
-    setFiles([...selectedFiles]);
   };
 
   useEffect(() => {
@@ -342,11 +379,12 @@ const AddAuction = () => {
               </label>
             </div>
             <div className="addauction__ul-list">
-              {/* <ul>
-                {inputs.highlights.map((item) => {
-                  return <li>{item}</li>;
-                })}
-              </ul> */}
+              <ul>
+                {inputs.highlights &&
+                  inputs.highlights.map((item) => {
+                    return <li onClick={removeHighlights}>{item}</li>;
+                  })}
+              </ul>
             </div>
 
             <h3>Wyposażenie</h3>
@@ -363,11 +401,12 @@ const AddAuction = () => {
               </label>
             </div>
             <div className="addauction__ul-list">
-              {/* <ul>
-                {inputs.equipment.map((item) => {
-                  return <li>{item}</li>;
-                })}
-              </ul> */}
+              <ul>
+                {inputs.equipment &&
+                  inputs.equipment.map((item) => {
+                    return <li onClick={removeEquipment}>{item}</li>;
+                  })}
+              </ul>
             </div>
 
             <h3>Wady</h3>
@@ -380,11 +419,12 @@ const AddAuction = () => {
               </label>
             </div>
             <div className="addauction__ul-list">
-              {/* <ul>
-                {inputs.flaws.map((item) => {
-                  return <li>{item}</li>;
-                })}
-              </ul> */}
+              <ul>
+                {inputs.flaws &&
+                  inputs.flaws.map((item) => {
+                    return <li onClick={removeFlaws}>{item}</li>;
+                  })}
+              </ul>
             </div>
 
             <div className="addauction__addbutton">

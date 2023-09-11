@@ -11,10 +11,6 @@ const Login = () => {
 
   const [err, setErr] = useState(null);
 
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("user")) || null
-  );
-
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -33,7 +29,7 @@ const Login = () => {
         }
       );
 
-      setCurrentUser(response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
 
       setErr(null);
       navigate("/");
@@ -41,10 +37,6 @@ const Login = () => {
       setErr(err.response.data);
     }
   };
-
-  useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(currentUser));
-  }, [currentUser]);
 
   return (
     <div className="login">

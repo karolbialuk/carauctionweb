@@ -1,3 +1,5 @@
+@import "~react-image-gallery/styles/scss/image-gallery.scss";
+
 body{
   overflow-x: hidden;
 }
@@ -6,6 +8,21 @@ body{
     display: flex;
     justify-content: center ;
     width: 100%;
+
+    & &__edit-button{
+      padding: 10px;
+      // width: 9vw;
+      // height: 45px;
+      border: none;
+      background: #1c9092;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin: 10px 0;
+      margin-bottom: 15px;
+    }
 
     & &__container{
         width: 75%;
@@ -27,41 +44,25 @@ body{
   & &__img-container{
     width: 100%;
     display: flex;
-    gap: 5px;
-  }
-
-  & &__big-img{
-    width: 70%;
+    justify-content: center;
+    align-items: center;
    
-
-
-    img{
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 5px;
-    }
   }
 
-  & &__small-imgs{
-    width: 30%;
-    
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-row-gap: 5px;
-    grid-column-gap: 5px;
-
-
-    img{
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 5px;
-    }
+  & &__gallery{
+    max-width: 1100px;
+    margin-top: 10px;
+    border-collapse: collapse;
+    border-width: 1px;
+    border-color: #c5c5c588;
+    border-style: solid;
+    border-radius: 5px;
   }
 
+  
   & &__info-table{
-    width: 80%;
+    width: 70%;
+    padding-right: 5vw;
     margin-top: 35px;
   }
 
@@ -91,7 +92,7 @@ body{
   }
 
   & &__first-row{
-    background: rgba(192, 192, 192, 0.329);
+    background: rgba(224, 224, 224, 0.315);
   }
 
   & &__bottom-container{
@@ -110,27 +111,112 @@ body{
   }
 
   & &__highlights{
+
+    
     h1{
       margin-top: 30px;
+      margin-bottom: 15px;
     }
 
+  
    
+  }
+
+  & &__bottom-items-button{
+    padding: 10px;
+    // width: 9vw;
+    // height: 45px;
+    border: none;
+    background: #1c9092;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    // margin: 10px 0;
+    margin-top: 10px;
   }
   & &__equipment{
     h1{
       margin-top: 30px;
+      margin-bottom: 15px;
     }
 
     
   }
 
+  & &__custom-file-input{
+    display: inline-block;
+    margin: 15px;
+    padding: 10px 20px;
+    background-color: #fff;
+    font-size: 0.8rem;
+    color: #444444;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+  
+
   & &__flaws{
     h1{
       margin-top: 30px;
+      margin-bottom: 15px;
+      
     }
 
    
   }
+
+  & &__button-container{
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+  }
+
+  textarea{
+    margin: 15px;
+    height: 200px;
+    width: 100%;
+    box-sizing: border-box; 
+    font-size: 16px;
+    resize: none; 
+    border: none; 
+    outline: none;
+    border-radius: 5px;
+}
+
+input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border: none;
+  padding: 5px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #444444;
+  width: 180px;
+}
+
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  border: none;
+  padding: 10px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #444444;
+  // width: 200px;
+
+ 
+  
+}
   
 }
 

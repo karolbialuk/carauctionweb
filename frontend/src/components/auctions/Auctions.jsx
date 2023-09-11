@@ -3,21 +3,40 @@ import "./Auctions.scss";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 const Auctions = () => {
-  const { isLoading, data, error } = useQuery(["actions"], () =>
-    axios
-      .get("http://localhost:8800/api/auctions", {
-        withCredentials: true,
-      })
-      .then((res) => {
-        return res.data;
-      })
+  const location = useLocation();
+
+  const apiPath =
+    location.pathname === "/"
+      ? "http://localhost:8800/api/auctions"
+      : "http://localhost:8800/api/auctions/myauctions";
+
+  const myauctionsPath = location.pathname === "/myauctions";
+  const homePath = location.pathname === "/";
+
+  const { isLoading, data, error } = useQuery(
+    [homePath ? "actions" : myauctionsPath ? "actions2" : ""],
+    () =>
+      axios
+        .get(apiPath, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          return res.data;
+        })
   );
 
   console.log(data);
+
   return (
-    <div className="auctions">
+    <div
+      className="auctions"
+      style={
+        myauctionsPath ? { width: "100%" } : homePath ? { width: "80%" } : {}
+      }
+    >
       <div className="auctions__container">
         {isLoading
           ? "Loading"

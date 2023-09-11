@@ -2,6 +2,7 @@ import React from "react";
 import "./NewListings.scss";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const NewListings = () => {
   const { isLoading, data, error } = useQuery(["actions"], () =>
@@ -24,40 +25,55 @@ const NewListings = () => {
           : data.map((item) => {
               return (
                 <div className="newlistings__auction-block">
-                  <div className="newlistings__img-container">
-                    <div className="newlistings__img-first-block">
-                      <img
-                        src={"/upload/" + item.img.split(",")[1]}
-                        alt="img1"
-                      />
-                    </div>
-                    <div className="newlistings__img-second-block">
-                      <div className="newlistings__img-second-block-first">
+                  <Link to={"/auction/" + item.id}>
+                    <div className="newlistings__img-container">
+                      <div className="newlistings__img-first-block">
                         <img
-                          src={"/upload/" + item.img.split(",")[3]}
-                          alt="img2"
+                          src={"/upload/" + item.img.split(",")[1]}
+                          alt="img1"
                         />
                       </div>
-                      <div className="newlistings__img-second-block-second">
-                        <img
-                          src={"/upload/" + item.img.split(",")[5]}
-                          alt="img3"
-                        />
+                      <div className="newlistings__img-second-block">
+                        {item.img.split(",")[3] && (
+                          <div className="newlistings__img-second-block-first">
+                            <img
+                              src={"/upload/" + item.img.split(",")[3]}
+                              alt="img2"
+                            />
+                          </div>
+                        )}
+                        {item.img.split(",")[5] && (
+                          <div className="newlistings__img-second-block-second">
+                            <img
+                              src={"/upload/" + item.img.split(",")[5]}
+                              alt="img3"
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                   <div className="newlistings__auction-block-text">
-                    <h2>2023 Porsche 718 Cayman GT4 RS</h2>
+                    <h2>
+                      {item.productionYear} {item.brandName} {item.modelName}
+                    </h2>
                     <p>
-                      ~1,900 Miles, 4.0-Liter Flat-6, Weissach Package, 20-inch
-                      Forged Wheels
+                      {item.highlights
+                        .split(",")
+                        .slice(0, 4)
+                        .map((item) => {
+                          return item + ", ";
+                        })}
                     </p>
                     <ul>
-                      <li>Weissach Package</li>
-                      <li>493hp 4.0L flat-6</li>
-                      <li>20-inch forged wheels</li>
+                      {item.equipment
+                        .split(",")
+                        .slice(0, 3)
+                        .map((item) => {
+                          return <li>{item}</li>;
+                        })}
                     </ul>
-                    <p>Monrovia, CA 91016</p>
+                    <p>{item.localization}</p>
                   </div>
                 </div>
               );

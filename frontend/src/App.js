@@ -54,9 +54,14 @@ const App = () => {
           path: '/addauction',
           element: <AddAuction />,
         },
+
         {
           path: '/auction/:id',
           element: <Auction />,
+        },
+        {
+          path: '/myauctions',
+          element: <Home />,
         },
       ],
     },
