@@ -44,7 +44,7 @@ const Auction = () => {
     auctionId: "",
   });
 
-  const { isLoading, data, error } = useQuery([], () =>
+  const { isLoading, data, error } = useQuery(["auctions"], () =>
     axios
       .get("http://localhost:8800/api/auctions?postId=" + id, {
         withCredentials: true,
@@ -343,6 +343,7 @@ const Auction = () => {
                 name="images"
                 accept="image/*"
                 id="fileInput"
+                className="auction__edit-button"
                 multiple
                 onChange={handleFileChange}
               />

@@ -12,6 +12,35 @@
 
     }
 
+    h2{
+        margin-top: -20px;
+        margin-bottom: 10px;
+    }
+
+    & &__auction-selectors{
+        margin: 15px 0;
+    }
+
+    & &__auction-selector-container{
+        display: flex;
+        gap: 15px;
+    }
+
+    select {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        outline: none;
+        border: none;
+        padding: 7px;
+        font-size: 0.8rem;
+        border-radius: 4px;
+        background-color: #ededed;
+        color: #000000;
+        font-weight: 1px;
+        // width: 200px;
+    }
+
     & &__auction-block{
         max-width: 350px;
         width: 100%;
