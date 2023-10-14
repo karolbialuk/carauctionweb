@@ -26,6 +26,45 @@
         gap: 15px;
     }
 
+    & &__inside-img-element2{
+        position: absolute;
+        max-width: 120px;
+        width: 100%;
+        bottom: 10px;
+        left: 10px;
+        text-align: center;
+        border-radius: 5px;
+        background: #181818c5;
+        padding: 2px 5px;
+        color: rgb(240, 240, 240);  
+    }
+
+    & &__inside-img-element{
+        cursor: pointer;
+        max-width: 25px;
+        max-height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        bottom: 180px;
+        color: rgba(22, 22, 22, 0.808);
+        border-radius: 2px;
+        padding: 1px;
+        transition: 0.2s ease;
+        font-size: 1.8rem;
+        font-weight: bold;
+        left: 307px;
+        // background: red;
+
+       
+    }
+
+    & &__inside-img-element.active{
+        background: #1c9092;
+        color: #fff;
+    }
+
     select {
         appearance: none;
         -webkit-appearance: none;
@@ -47,12 +86,29 @@
         display: flex;
         flex-direction: column;
         margin-bottom: 15px;
+
+        
+
+       
         
     }
 
     & &__auction-block-img{
-        height: 200px;
- 
+        height: 215px;
+        transition: 0.2s ease;
+        position: relative;
+        
+        &:hover{
+           filter:brightness(85%);
+           transition: 0.1s ease;
+
+
+           .auctions__inside-img-element{
+            background: #1c9092;
+            transition: 0.2s ease;
+           }
+        }
+        
 
         img{
             width: 100%;
@@ -60,6 +116,7 @@
             object-fit: cover;
             display: block;
             border-radius: 3px;
+
             
         }
     }
@@ -67,9 +124,15 @@
     & &__auction-block-text{
         margin-top: 10px;
         display: flex;
-        flex-direction: column;
         justify-content: space-between;
         gap: 6px;
+
+        &:hover{
+            .auctions__inside-img-element{
+                background: #1c9092;
+                color: #fff;
+            }
+        }
 
         h2{
             font-size: 1rem;

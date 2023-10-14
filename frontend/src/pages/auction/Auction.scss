@@ -9,6 +9,8 @@ body{
     justify-content: center ;
     width: 100%;
 
+    
+
     & &__edit-button{
       padding: 10px;
       // width: 9vw;
@@ -24,21 +26,90 @@ body{
       margin-bottom: 15px;
     }
 
+    & &__header{
+      font-size: 1rem;
+    }
+
     & &__container{
-        width: 75%;
+        width: 70%;
         margin: 20px 0;
 
         h1{
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
+
+
         }
+
+        
 
         h2{
             margin: 10px 0;
             font-size: 1.1rem;
-            font-weight: 100;
             margin-bottom: 15px;
+
         }
+    }
+
+    & &__add-comment-button.active{
+      background: #1c9092;
+      transition: 0.2s ease;
+      color: #fff;
+    }
+
+    & &__item{
+      background: rgba(31, 31, 31, 0.932);
+      margin-bottom: 20px;
+      color: #fff;
+      width: 34%;
+      min-width: 100px;
+      display: flex;
+      padding: 10px 15px;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      align-items: center;
+      // justify-content: center;
+
+      h4{
+        margin: 0;
+      }
+
+      span {
+        color: rgb(175, 175, 175);
+      }
+   
+      
+    }
+
+    & &__info{
+      background: #1c9092e5;
+      width: 10%;
+      padding: 10px 0;
+      align-items: center;
+      display: flex;
+      color: #fff;
+      margin-bottom: 20px;
+      justify-content: center;
+      border-radius: 5px;
+      min-width: 100px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      transition: 0.2s ease;
+      cursor: pointer;
+      
+      
+    }
+
+    & &__info.active{
+      background: #e04902e5;
+      transition: 0.2s ease;
+    }
+
+    & &__infoprice-container{
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      gap : 15px;
     }
 
   & &__img-container{
@@ -61,9 +132,12 @@ body{
 
   
   & &__info-table{
-    width: 70%;
-    padding-right: 5vw;
+    width: 80%;
+    padding-right: 1vw;
     margin-top: 35px;
+    display: flex;
+    flex-direction: column;
+    
   }
 
   table {
@@ -98,15 +172,24 @@ body{
   & &__bottom-container{
     display: flex;
     gap: 25px;
+    justify-content: space-between;
   }
 
   & &__description{
-    h1{
-      margin-top: 30px;
-    }
+    margin-top: 20px;
+    background: rgba(226, 226, 226, 0.712);
+    padding: 15px;
+    border-radius: 4px;
 
+    h1{
+      font-size: 1.2rem;
+      
+    }
+    
     p{
       text-align: justify;
+      margin: 8px 0;
+      color: #505050;
     }
   }
 
@@ -166,7 +249,87 @@ body{
       
     }
 
+
+  }
+
+  & &__comments{
+    h1{
+      margin-top: 30px;
+      margin-bottom: 15px;
+      
+    }
+  }
+  
+
+  & &__comments-input{
+    border: 1px solid rgba(0, 0, 0, 0.24);
+    height: 40px;
+    width: 100%;
    
+  }
+
+  & &__comments-input-container{
+     position: relative;
+  }
+
+  & &__comments-items{
+    margin: 4px 25px;
+    
+  }
+
+  & &__comments-icon-owner{
+    margin-top: 15.2px;
+    background: rgba(112, 5, 233, 0.849);
+    border-radius: 5px;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    color: #fff;
+    align-items: center;
+    justify-content: center;
+  }
+  & &__comments-icon-like{
+    margin-top: 15.2px;
+    // background: rgba(112, 5, 233, 0.849);
+    color: #131313;
+    border-radius: 5px;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+
+  & &__comments-item{
+    h3{
+      font-size: 0.95rem;
+      margin-bottom: 0px;
+    }
+    p{
+      margin-top: 4px;
+      color:#383838;
+      font-size: 0.9rem;
+    }
+  }
+
+  & &__add-comment-button{
+    position: absolute;
+    top: 9px;
+    border-radius: 30px;
+    right: 0px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(112, 112, 112, 0.733);
+    background: rgba(138, 138, 138, 0.24);
+    padding: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.2s ease;
   }
 
   & &__button-container{
@@ -176,7 +339,7 @@ body{
   }
 
   textarea{
-    margin: 15px;
+    // margin: 15px;
     height: 200px;
     width: 100%;
     box-sizing: border-box; 
@@ -217,6 +380,15 @@ select {
  
   
 }
-  
+
 }
 
+
+@media (max-width: 730px) {
+  .auction {
+    & &__info-table{
+      width: 100%;
+     padding-right: 0;
+    }
+  }
+}

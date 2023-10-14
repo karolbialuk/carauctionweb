@@ -5,7 +5,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import NewListings from "../../components/newlistings/NewListings";
 import ImageGallery from "react-image-gallery";
+import { AiOutlineStar, AiOutlineLike } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineArrowDown } from "react-icons/ai";
 import { Link } from "react-router-dom";
 
 const Auction = () => {
@@ -16,8 +18,12 @@ const Auction = () => {
   const [models, setModels] = useState(null);
   const [brandId, setBrandId] = useState("");
   const [files, setFiles] = useState([]);
+  const [isFunctionExecuting, setIsFunctionExecuting] = useState(false);
+  const [comment, setComment] = useState("");
 
   const userId = JSON.parse(localStorage.getItem("user")).id;
+  const userName = JSON.parse(localStorage.getItem("user")).username;
+  const telefon = JSON.parse(localStorage.getItem("user")).telefon;
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -80,6 +86,16 @@ const Auction = () => {
     }));
   }, [data]);
 
+  const { data: user } = useQuery(["user"], () =>
+    axios
+      .get("http://localhost:8800/api/auth?userId=" + 52, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        return res.data;
+      })
+  );
+
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -112,23 +128,14 @@ const Auction = () => {
     mutation.mutate(id);
   };
 
-  // const handleUpdate = async () => {
-  //   await axios.put(
-  //     "http://localhost:8800/api/auctions?auctionId=" + id,
-  //     {
-  //       ...inputs,
-  //       highlights: inputs.highlights.join(","),
-  //       equipment: inputs.equipment.join(","),
-  //       flaws: inputs.flaws.join(","),
-  //     },
-  //     {
-  //       withCredentials: true,
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //     }
-  //   );
-  // };
+  useEffect(() => {
+    const element = document.getElementById("add-comment");
+    if (comment) {
+      element.classList.add("active");
+    } else if (!comment && element && element.classList.contains("active")) {
+      element.classList.remove("active");
+    }
+  }, [comment]);
 
   const updateMutation = useMutation(() => {
     const changedInputs = {
@@ -174,6 +181,45 @@ const Auction = () => {
     window.location.reload();
   };
 
+  const handleAddComment = async () => {
+    const element = document.getElementById("comments-input");
+    const element2 = document.getElementById("add-comment");
+
+    element.value = "";
+    element2.classList.remove("active");
+
+    if (comment) {
+      const inputs = {
+        auctionId: id,
+        userId: userId,
+        comment: comment,
+      };
+
+      axios
+        .post("http://localhost:8800/api/comments/add", inputs, {
+          withCredentials: true,
+        })
+        .then(() => {
+          refetchComments();
+        });
+    }
+  };
+
+  const handleLike = async (idComment) => {
+    const inputs = {
+      userId,
+      id,
+      idComment,
+    };
+    axios
+      .post("http://localhost:8800/api/likes/like", inputs, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        return res.data && refetchLikesData();
+      });
+  };
+
   const fetchBrands = async () => {
     try {
       const res = await axios.get("http://localhost:8800/api/brands", {
@@ -211,9 +257,6 @@ const Auction = () => {
     fetchModels();
   }, [brandId]);
 
-  console.log(inputs);
-  console.log(files);
-
   const highlightsAdd = (e) => {
     const inputValue = document.getElementById("highlightInput").value;
     setInputs((prev) => ({
@@ -221,7 +264,6 @@ const Auction = () => {
       highlights: prev.highlights.concat(inputValue),
     }));
     document.getElementById("highlightInput").value = "";
-    console.log(inputs);
   };
 
   const equipmentAdd = (e) => {
@@ -275,6 +317,90 @@ const Auction = () => {
     }
   };
 
+  const { data: likedAuctions, refetch: refetchLiked } = useQuery(
+    ["likedAuctions"],
+    () =>
+      axios
+        .get("http://localhost:8800/api/favourites", {
+          withCredentials: true,
+        })
+        .then((res) => {
+          return res.data;
+        })
+  );
+
+  const { data: commentsData, refetch: refetchComments } = useQuery(
+    ["comments"],
+    () =>
+      axios
+        .get("http://localhost:8800/api/comments?idAuction=" + id, {
+          withCredentials: true,
+        })
+        .then((res) => {
+          return res.data;
+        })
+  );
+
+  const { data: likesData, refetch: refetchLikesData } = useQuery(
+    ["likes"],
+    () =>
+      axios
+        .get("http://localhost:8800/api/likes", {
+          withCredentials: true,
+        })
+        .then((res) => {
+          return res.data;
+        })
+  );
+
+  useEffect(() => {
+    refetchLiked();
+  }, [location.pathname, setIsFunctionExecuting]);
+
+  const liked =
+    likedAuctions &&
+    likedAuctions.map((item) => {
+      if (item.idUser === userId) {
+        return item.idAuction;
+      }
+    });
+
+  const likeAuction = async (event, auctionId) => {
+    const element = document.getElementById("auctionId");
+
+    if (element.classList.contains("active")) {
+      element.classList.remove("active");
+      element.innerHTML = "Obserwuj";
+    } else {
+      element.classList.add("active");
+      element.innerHTML = "Obserwujesz";
+    }
+
+    const inputs = {
+      userId,
+      auctionId,
+    };
+    try {
+      await axios.post("http://localhost:8800/api/favourites/like", inputs, {
+        withCredentials: true,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    setIsFunctionExecuting((prev) => !prev);
+  };
+
+  const hoverClick = () => {
+    const element = document.getElementById("auctionId2");
+    if (element.classList.contains("active")) {
+      element.classList.remove("active");
+      element.innerHTML = "Zadzwoń";
+    } else {
+      element.classList.add("active");
+      element.innerHTML = telefon;
+    }
+  };
+
   if (isLoading) {
     return <div>Ładowanie</div>;
   } else if (error) {
@@ -297,6 +423,14 @@ const Auction = () => {
 
       images.push(imageObject);
     }
+
+    let PLN = new Intl.NumberFormat("pl-PL", {
+      style: "currency",
+      currency: "PLN",
+    });
+
+    const date =
+      data[0].addedAt && new Date(data[0].addedAt).toLocaleDateString();
 
     return (
       <div className="auction">
@@ -325,11 +459,13 @@ const Auction = () => {
               </button>
             )}
           </div>
+
           <div className="auction__img-container">
             <div className="auction__gallery">
               <ImageGallery items={images} />
             </div>
           </div>
+
           <div>
             {edit && data[0].userId === userId && (
               <label for="fileInput" class="auction__custom-file-input">
@@ -349,15 +485,53 @@ const Auction = () => {
               />
             )}
           </div>
-
           <div className="addauction__selected-files">
             {files.map((item) => {
               return <p>{item.name}</p>;
             })}
           </div>
-
           <div className="auction__bottom-container">
             <div className="auction__info-table">
+              <div className="auction__infoprice-container">
+                <div className="auction__item">
+                  <h4>
+                    <span>Cena </span>
+                    {PLN.format(data[0].startingPrice)}
+                  </h4>
+                </div>
+                <div className="auction__item">
+                  <h4>
+                    <span>Data publikacji </span>
+                    {date}
+                  </h4>
+                </div>
+                {liked && liked.includes(data[0].id) ? (
+                  <div
+                    onClick={(event) => likeAuction(event, data[0].id)}
+                    className="auction__info active"
+                    id="auctionId"
+                  >
+                    Obserwujesz
+                  </div>
+                ) : userId === data[0].userId ? (
+                  ""
+                ) : (
+                  <div
+                    onClick={(event) => likeAuction(event, data[0].id)}
+                    className="auction__info"
+                    id="auctionId"
+                  >
+                    Obserwuj
+                  </div>
+                )}
+                <div
+                  onClick={hoverClick}
+                  id="auctionId2"
+                  className="auction__info"
+                >
+                  Zadzwoń
+                </div>
+              </div>
               <table class="customTable">
                 <tbody>
                   <tr>
@@ -612,8 +786,7 @@ const Auction = () => {
                 </tbody>
               </table>
               <div className="auction__description">
-                <h1>Opis Auta</h1>
-
+                <h1>{userName}</h1>
                 {(edit && (
                   <textarea
                     placeholder={data && data[0].description}
@@ -690,12 +863,81 @@ const Auction = () => {
                     })}
                 </ul>
               </div>
-              {edit && data[0].userId === userId && (
-                <button onClick={handleUpdate} className="auction__edit-button">
-                  Zapisz zmiany
-                </button>
-              )}
+              <div className="auction__comments">
+                <h1>Komentarze</h1>
+                <div className="auction__comments-input-container">
+                  <input
+                    type="text"
+                    id="comments-input"
+                    className="auction__comments-input"
+                    name="comments"
+                    placeholder="Dodaj komentarz..."
+                    maxLength="300"
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <div
+                    onClick={handleAddComment}
+                    id="add-comment"
+                    className="auction__add-comment-button"
+                  >
+                    <AiOutlineArrowDown />
+                  </div>
+                </div>
+              </div>
+              <div className="auction__comments-items">
+                {commentsData &&
+                  commentsData
+                    .slice()
+                    .reverse()
+                    .map((item) => {
+                      const filteredLikesData = likesData.filter(
+                        (item2) => item2.idComment === item.id
+                      );
+
+                      return (
+                        <div className="auction__comments-item">
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "8px",
+                            }}
+                          >
+                            <div>
+                              <h3>{item.username}</h3>
+                            </div>
+
+                            {item.idUser === data[0].userId && (
+                              <div className="auction__comments-icon-owner">
+                                <AiOutlineStar />
+                              </div>
+                            )}
+
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <div style={{ marginTop: "15.2px" }}>
+                                {filteredLikesData.length}
+                              </div>
+                              <div
+                                onClick={() => handleLike(item.id)}
+                                className="auction__comments-icon-like"
+                              >
+                                <AiOutlineLike />
+                              </div>
+                            </div>
+                          </div>
+
+                          <p>{item.comment}</p>
+                        </div>
+                      );
+                    })}
+              </div>
             </div>
+
             <NewListings />
           </div>
         </div>

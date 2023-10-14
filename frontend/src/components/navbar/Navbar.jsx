@@ -1,9 +1,10 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.scss";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavbarContext } from "../../context";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const logout = () => {
@@ -12,6 +13,16 @@ const Navbar = () => {
   };
 
   const { searchValue, setSearchValue } = useNavbarContext();
+
+  const location = useLocation();
+
+  const search = location.pathname === "/addauction" || (
+    <input
+      onChange={(e) => setSearchValue(e.target.value)}
+      type="text"
+      placeholder="Wyszukaj auto"
+    />
+  );
 
   const queryClient = useQueryClient();
 
@@ -41,13 +52,14 @@ const Navbar = () => {
               <Link to="/myauctions">Moje aukcje</Link>
             </h3>
           </div>
+          <div>
+            <h3>
+              <Link to="/favourite">Zapisane aukcje</Link>
+            </h3>
+          </div>
         </div>
         <div className="navbar__right-content">
-          <input
-            onChange={(e) => setSearchValue(e.target.value)}
-            type="text"
-            placeholder="Wyszukaj auto"
-          />
+          {search}
           <button onClick={logout}>Wyloguj</button>
         </div>
       </div>

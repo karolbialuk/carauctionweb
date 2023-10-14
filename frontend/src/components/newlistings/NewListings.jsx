@@ -16,8 +16,8 @@ const NewListings = () => {
   );
   return (
     <div className="newlistings">
+      <h2>Nowe aukcje</h2>
       <div className="newlistings__container">
-        <h1>Nowe aukcje</h1>
         {isLoading
           ? "Ładowanie"
           : error

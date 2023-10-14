@@ -9,6 +9,7 @@ const Register = () => {
     password: "",
     username: "",
     email: "",
+    telefon: "",
   });
 
   const navigate = useNavigate();
@@ -87,6 +88,18 @@ const Register = () => {
                 type="text"
                 placeholder="Wpisz adres email"
                 name="email"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="register__input-container">
+              <div className="register__input-label">
+                <h3>Numer telefonu</h3>
+              </div>
+              <input
+                type="number"
+                placeholder="Wpisz numer telefonu"
+                name="telefon"
+                maxLength={9}
                 onChange={handleChange}
               />
             </div>

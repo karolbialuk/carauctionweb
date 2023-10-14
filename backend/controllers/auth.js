@@ -55,17 +55,22 @@ export const register = (req, res) => {
         : ''
 
       const q =
-        'INSERT INTO users (`login`,`password`,`username`,`email`) VALUE (?)'
+        'INSERT INTO users (`login`,`password`,`username`,`email`,`telefon`) VALUE (?)'
 
       const values = [
         req.body.login,
         hashedPassword,
         req.body.username,
         req.body.email,
+        req.body.telefon,
       ]
 
       if (values.includes(''))
         return res.status(404).json('Wypełnij wszyskie pola.')
+
+      if (req.body.telefon.length !== 9) {
+        return res.status(404).json('Numer telefonu jest nieprawidłowy')
+      }
 
       db.query(q, [values], (err, data) => {
         if (err) return res.status(500).json(err)
@@ -73,4 +78,13 @@ export const register = (req, res) => {
       })
     },
   )
+}
+
+export const users = (req, res) => {
+  const q = 'SELECT * FROM users WHERE id = ? '
+
+  db.query(q, [req.query.userId], (err, data) => {
+    if (err) return res.status(500).json(err)
+    return res.status(200).json(data)
+  })
 }
