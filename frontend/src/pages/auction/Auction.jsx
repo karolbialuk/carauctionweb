@@ -44,10 +44,10 @@ const Auction = () => {
     sellerType: "",
     img: [],
     description: "",
-    highlights: "",
-    equipment: "",
-    flaws: "",
-    auctionId: "",
+    highlights: [],
+    equipment: [],
+    flaws: [],
+    auctionId: [],
   });
 
   const { isLoading, data, error } = useQuery(["auctions"], () =>
@@ -79,12 +79,14 @@ const Auction = () => {
       sellerType: data && data[0].sellerType,
       img: data && data[0].img,
       description: data && data[0].description,
-      highlights: data && data[0].highlights.split(","),
-      equipment: data && data[0].equipment.split(","),
-      flaws: data && data[0].flaws.split(","),
+      highlights: data && JSON.parse(data[0].highlights),
+      equipment: data && JSON.parse(data[0].equipment),
+      flaws: data && JSON.parse(data[0].flaws),
       auctionId: data && data[0].id,
     }));
   }, [data]);
+
+  console.log(inputs);
 
   const { data: user } = useQuery(["user"], () =>
     axios
@@ -140,9 +142,9 @@ const Auction = () => {
   const updateMutation = useMutation(() => {
     const changedInputs = {
       ...inputs,
-      highlights: inputs.highlights.join(","),
-      equipment: inputs.equipment.join(","),
-      flaws: inputs.flaws.join(","),
+      highlights: JSON.stringify(inputs.highlights),
+      equipment: JSON.stringify(inputs.equipment),
+      flaws: JSON.stringify(inputs.flaws),
     };
 
     const updatedFormData = new FormData();
@@ -341,6 +343,8 @@ const Auction = () => {
         })
   );
 
+  console.log({ commentsData: commentsData });
+
   const { data: likesData, refetch: refetchLikesData } = useQuery(
     ["likes"],
     () =>
@@ -496,7 +500,16 @@ const Auction = () => {
                 <div className="auction__item">
                   <h4>
                     <span>Cena </span>
-                    {PLN.format(data[0].startingPrice)}
+
+                    {(edit && (
+                      <input
+                        type="number"
+                        placeholder={data && data[0].startingPrice}
+                        onChange={handleChange}
+                        name="startingPrice"
+                      />
+                    )) ||
+                      PLN.format(data[0].startingPrice)}
                   </h4>
                 </div>
                 <div className="auction__item">
@@ -792,7 +805,7 @@ const Auction = () => {
                     placeholder={data && data[0].description}
                     name="description"
                     // value=
-                    maxLength="300"
+                    maxLength="600"
                     onChange={handleChange}
                   />
                 )) || <p>{data[0].description}</p>}
@@ -863,6 +876,16 @@ const Auction = () => {
                     })}
                 </ul>
               </div>
+              <div>
+                {edit && (
+                  <button
+                    onClick={handleUpdate}
+                    className="auction__save-edit-button"
+                  >
+                    Zapisz zmiany
+                  </button>
+                )}
+              </div>
               <div className="auction__comments">
                 <h1>Komentarze</h1>
                 <div className="auction__comments-input-container">
@@ -884,6 +907,7 @@ const Auction = () => {
                   </div>
                 </div>
               </div>
+
               <div className="auction__comments-items">
                 {commentsData &&
                   commentsData

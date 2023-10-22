@@ -11,7 +11,7 @@ export const getComments = (req, res) => {
     if (err) return res.status(404).json('Nieprawidłowy token!')
 
     const q =
-      'SELECT c.id, c.comment, u.username, c.idUser FROM comments c JOIN users u ON u.id = c.idUser  WHERE idAuction = ?'
+      'SELECT c.id, c.comment, u.username, c.idUser FROM comments c JOIN users u ON u.id = c.idUser  WHERE idAuction = ? ORDER BY c.id ASC'
     db.query(q, [idAuction], (err, data) => {
       if (err) return res.status(500).json(err)
       return res.status(200).json(data)
@@ -20,7 +20,6 @@ export const getComments = (req, res) => {
 }
 export const addComment = (req, res) => {
   const token = req.cookies.accessToken
-
   const auctionId = req.body.auctionId
   const userId = req.body.userId
   const comment = req.body.comment

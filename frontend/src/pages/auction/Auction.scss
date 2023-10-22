@@ -268,6 +268,18 @@ body{
    
   }
 
+  & &__save-edit-button{
+    border: none;
+    padding: 8px;
+    margin-top: 10px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 3px;
+    background: #1c9092;
+  }
+
   & &__comments-input-container{
      position: relative;
   }

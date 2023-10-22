@@ -22,9 +22,9 @@ const AddAuction = () => {
     sellerType: "",
     img: [],
     description: "",
-    highlights: "",
-    equipment: "",
-    flaws: "",
+    highlights: [],
+    equipment: [],
+    flaws: [],
   });
 
   const [err, setErr] = useState(null);
@@ -34,11 +34,28 @@ const AddAuction = () => {
   const [files, setFiles] = useState([]);
   const [brandId, setBrandId] = useState("");
 
+  const queryClient = useQueryClient();
+
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const updatedFormData = new FormData();
+
+  // useEffect(() => {
+  //   for (const key in inputs) {
+  //     updatedFormData.append(key, inputs[key]);
+  //   }
+
+  //   for (let i = 0; i < files.length; i++) {
+  //     updatedFormData.append("images", files[i]);
+  //   }
+
+  //   console.log(updatedFormData);
+  // }, [files, inputs]);
+
   const highlightsAdd = (e) => {
+    e.preventDefault();
     const inputValue = document.getElementById("highlightInput").value;
     setInputs((prev) => ({
       ...prev,
@@ -48,6 +65,7 @@ const AddAuction = () => {
   };
 
   const equipmentAdd = (e) => {
+    e.preventDefault();
     const inputValue = document.getElementById("equipmentInput").value;
     setInputs((prev) => ({
       ...prev,
@@ -55,6 +73,8 @@ const AddAuction = () => {
     }));
     document.getElementById("equipmentInput").value = "";
   };
+
+  console.log(inputs);
 
   const removeHighlights = (e) => {
     e.preventDefault();
@@ -84,6 +104,7 @@ const AddAuction = () => {
   };
 
   const flawsAdd = (e) => {
+    e.preventDefault();
     const inputValue = document.getElementById("flawsInput").value;
     setInputs((prev) => ({
       ...prev,
@@ -92,67 +113,49 @@ const AddAuction = () => {
     document.getElementById("flawsInput").value = "";
   };
 
-  const handleClick = async (e) => {
-    e.preventDefault();
+  const mutation = useMutation(
+    (updatedFormData) => {
+      const updatedInputs = {
+        ...inputs,
+        highlights: JSON.stringify(inputs.highlights),
+        equipment: JSON.stringify(inputs.equipment),
+        flaws: JSON.stringify(inputs.flaws),
+      };
 
-    try {
-      // const data = Object.values(inputs).includes("")
-      //   ? ""
-      //   : await handleUpload();
-
-      // console.log({ ez: data });
-
-      const updatedFormData = new FormData();
-
-      for (const key in inputs) {
-        updatedFormData.append(key, inputs[key]);
+      for (const key in updatedInputs) {
+        updatedFormData.append(key, updatedInputs[key]);
       }
 
       for (let i = 0; i < files.length; i++) {
         updatedFormData.append("images", files[i]);
       }
-
-      const res = await axios.post(
-        "http://localhost:8800/api/auctions",
-        updatedFormData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setErr(null);
-      setResponse(res.data);
-    } catch (err) {
-      setResponse(null);
-      setErr(err.response.data);
-      console.log(err);
+      return axios.post("http://localhost:8800/api/auctions", updatedFormData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(["auctions"]);
+      },
     }
+  );
+
+  const handleClick = async (e) => {
+    e.preventDefault();
+
+    mutation.mutate(updatedFormData);
   };
 
   const handleFileChange = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     const selectedFiles = e.target.files;
     setFiles([...selectedFiles]);
   };
-
-  // const handleUpload = async () => {
-  //   try {
-  //     const formData = new FormData();
-  //     for (let i = 0; i < files.length; i++) {
-  //       formData.append("images", files[i]);
-  //     }
-
-  //     const response = await axios.post(
-  //       "http://localhost:8800/api/upload",
-  //       formData
-  //     );
-
-  //     return response.data.uploadedFiles.join(",");
-  //   } catch (error) {
-  //     console.error("Error uploading files:", error);
-  //   }
-  // };
 
   const fetchBrands = async () => {
     try {
@@ -268,7 +271,7 @@ const AddAuction = () => {
               />
             </div>
             <div className="addauction__form-item">
-              <h2>Cena start. EUR</h2>
+              <h2>Cena PLN</h2>
               <input
                 placeholder="Wprowadź cenę startową"
                 type="number"
@@ -291,6 +294,7 @@ const AddAuction = () => {
                 placeholder="Wprowadź numer VIN"
                 type="number"
                 name="vin"
+                maxLength={11}
                 onChange={handleChange}
               />
             </div>
@@ -361,14 +365,19 @@ const AddAuction = () => {
               <textarea
                 placeholder="Wprowadź opis samochodu"
                 name="description"
-                maxLength="300"
+                maxLength="600"
                 onChange={handleChange}
               />
             </div>
             <h3>Najważniejsze informacje</h3>
             <div className="addauction__form-item-list">
               <label for="highlightInput">
-                <input id="highlightInput" name="highlights" type="text" />
+                <input
+                  maxLength={40}
+                  id="highlightInput"
+                  name="highlights"
+                  type="text"
+                />
                 <button
                   id="highlightInput"
                   type="button"
