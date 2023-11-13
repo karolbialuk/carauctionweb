@@ -12,8 +12,8 @@ import AddAuction from "./pages/addAuction/AddAuction";
 import Auction from "./pages/auction/Auction";
 import Home from "./components/home/Home";
 import Navbar from "./components/navbar/Navbar";
+import Profile from "./pages/profile/Profile";
 import "./style.scss";
-import axios from "axios";
 import { NavbarProvider } from "./context";
 
 const App = () => {
@@ -69,6 +69,10 @@ const App = () => {
           path: "/favourite",
           element: <Home />,
         },
+        {
+          path: "/profile",
+          element: <Profile />,
+        },
       ],
     },
     {
@@ -77,7 +81,11 @@ const App = () => {
     },
     {
       path: "/register",
-      element: <Register />,
+      element: (
+        <QueryClientProvider client={queryClient}>
+          <Register />
+        </QueryClientProvider>
+      ),
     },
   ]);
 

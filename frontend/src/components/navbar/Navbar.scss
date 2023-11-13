@@ -19,8 +19,9 @@
     & &__left-content{
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 2vw;
+        width: 100%;
         margin-right: 10px;
         
         
@@ -79,6 +80,21 @@
        
     }
 
+    & &__logout-btn{
+        padding: 5px 10px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+        background: #1c9092;
+        border-radius: 4px;
+        color: #fff;
+        font-weight: bold;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
     & &__right-content{
         display: flex;
         align-items: center;
@@ -88,26 +104,163 @@
 
         input{
             border: none;
-            padding: 15px 15px;
-            width: 18vw;
+            padding: 12px 12px;
+            max-width: 30vw;
+            min-width: 10vw;
+            width: 100%;
             outline: none;
             border-radius: 4px;
             // border: 1px solid rgba(196, 196, 196, 0.692);
             background: rgb(231, 231, 231);
         }
 
-        button{
-            padding: 15px 30px;
-            // width: 9vw;
-            height: 45px;
-            border: none;
-            background: #1c9092;
-            border-radius: 4px;
-            color: #fff;
-            font-weight: bold;
+        
+    }
+
+    & &__hamburger-menu{
+        font-size: 1.5rem;
+        margin: 0 20px;
+        display: none;
+        cursor: pointer;
+        position: relative;
+    }
+    & &__profile-menu{
+        font-size: 1.5rem;
+        margin: 0 20px;
+        // display: none;
+        cursor: pointer;
+        position: relative;
+        width: 150px;
+        position: absolute;
+        top: 55px;
+    }
+
+    & &__hamburger-menu-list{
+        position: absolute;
+        background: rgb(231, 231, 231);
+        top: 45px;
+        right: -35px;
+        // display: none;
+        width: 140px;
+        border-radius: 3px;
+        z-index: 999;
+        transition: 0.3s ease;
+
+        a{
+            text-decoration: none;
+            color: #131313;
+        }
+
+        ul{
+            margin: 0;
+            padding: 0;
+        }
+        
+        li{
+            list-style-type: none;
             font-size: 0.9rem;
-            cursor: pointer;
+            padding: 6px 15px;
+            text-align: center;
+            display: flex;
+            width: 100%;
+            gap: 10px;
+           
+            align-items: center;
         }
     }
 
+    & &__profile-menu-list{
+        background: rgb(231, 231, 231);
+        // display: none;
+        padding: 0 15px;
+        border-radius: 10px;
+        z-index: 999;
+        transition: 0.3s ease;
+
+        a{
+            text-decoration: none;
+            color: #131313;
+        }
+
+        ul{
+            margin: 0;
+            padding: 10px 0;
+        }
+        
+        li{
+            list-style-type: none;
+            font-size: 0.9rem;
+            padding: 5px 0px;
+            text-align: center;
+            display: flex;
+            width: 100%;
+            gap: 10px;
+           
+            align-items: center;
+        }
+    }
+
+    & &__hamburger-menu-list.active{
+        display: block;
+    }
+
+    & &__profile-menu-list.active{
+        display: block;
+    }
+
+    & &__img-container{
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        img{
+            width: 45px;
+            border-radius: 50px;
+        }
+    }
+
+    
 }
+
+@media (max-width: 1300px) {
+    .navbar{
+        
+
+       
+    }
+}
+
+@media (max-width: 1100px) {
+    .navbar{
+        #first-link{
+            display: none;
+        }
+        #second-link{
+            display: none;
+        }
+        #third-link{
+            display: none;
+        }
+
+        #four-link{
+            display: none;
+        }
+        & &__hamburger-menu{
+            display: flex;
+        }
+
+
+    }
+}
+
+@media (max-width: 450px){
+    .navbar{
+        & &__left-content{
+            display: none;
+        }
+    }
+}
+
+

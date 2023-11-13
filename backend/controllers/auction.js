@@ -1,40 +1,40 @@
-import { db } from '../connect.js'
-import jwt from 'jsonwebtoken'
-import moment from 'moment'
-import sharp from 'sharp'
-import path from 'path'
+import { db } from "../connect.js";
+import jwt from "jsonwebtoken";
+import moment from "moment";
+import sharp from "sharp";
+import path from "path";
 
 export const addAuction = async (req, res) => {
-  const token = req.cookies.accessToken
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
   try {
-    const userInfo = jwt.verify(token, 'secretkey')
+    const userInfo = jwt.verify(token, "secretkey");
 
-    const files = req.files
-    const uploadedFileNames = []
+    const files = req.files;
+    const uploadedFileNames = [];
 
     for (const file of files) {
-      const uniqueFileName = Date.now() + '-' + Math.round(Math.random() * 1e9)
+      const uniqueFileName = Date.now() + "-" + Math.round(Math.random() * 1e9);
 
-      const upload = '../frontend/public/upload/'
+      const upload = "../frontend/public/upload/";
 
       const highResFilePath =
-        upload + uniqueFileName + '_high' + path.extname(file.originalname)
-      await sharp(file.path).resize(1800, 1200).toFile(highResFilePath)
+        upload + uniqueFileName + "_high" + path.extname(file.originalname);
+      await sharp(file.path).resize(1800, 1200).toFile(highResFilePath);
 
       const lowResFilePath =
-        upload + uniqueFileName + '_low' + path.extname(file.originalname)
-      await sharp(file.path).resize(702, 468).toFile(lowResFilePath)
+        upload + uniqueFileName + "_low" + path.extname(file.originalname);
+      await sharp(file.path).resize(702, 468).toFile(lowResFilePath);
 
       uploadedFileNames.push(
         path.basename(highResFilePath),
-        path.basename(lowResFilePath),
-      )
+        path.basename(lowResFilePath)
+      );
     }
 
     const q =
-      'INSERT INTO auctions(`brand`,`model`,`productionYear`,`fuelType`,`mileage`,`localization`,`color`,`startingPrice`,`capacity`,`vin`,`transmission`,`bodyStyle`, `interiorColor`, `sellerType`, `img`,`description`,`highlights`,`equipment`,`flaws`,`addedAt`,`userId`) values(?)'
+      "INSERT INTO auctions(`brand`,`model`,`productionYear`,`fuelType`,`mileage`,`localization`,`color`,`startingPrice`,`capacity`,`vin`,`transmission`,`bodyStyle`, `interiorColor`, `sellerType`, `img`,`description`,`highlights`,`equipment`,`flaws`,`addedAt`,`userId`) values(?)";
 
     const values = [
       req.body.brand,
@@ -51,119 +51,119 @@ export const addAuction = async (req, res) => {
       req.body.bodyStyle,
       req.body.interiorColor,
       req.body.sellerType,
-      uploadedFileNames.join(','),
+      uploadedFileNames.join(","),
       req.body.description,
       req.body.highlights,
       req.body.equipment,
       req.body.flaws,
-      moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+      moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
       userInfo.id,
-    ]
+    ];
 
-    if (values.includes('')) {
-      return res.status(404).json('Wypełnij wszystkie pola')
+    if (values.includes("")) {
+      return res.status(404).json("Wypełnij wszystkie pola");
     }
 
     db.query(q, [values], (err, data) => {
       if (err) {
-        console.error(err)
-        return res.status(500).json(err)
+        console.error(err);
+        return res.status(500).json(err);
       }
-      return res.status(200).json(data)
-    })
+      return res.status(200).json(data);
+    });
   } catch (error) {
-    console.error(error)
-    return res.status(401).json('Wystąpił błąd podczas weryfikacji tokenu.')
+    console.error(error);
+    return res.status(401).json("Wystąpił błąd podczas weryfikacji tokenu.");
   }
-}
+};
 
 export const getAuctions = (req, res) => {
-  const postId = req.query.postId
+  const postId = req.query.postId;
 
-  const token = req.cookies.accessToken
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
-  jwt.verify(token, 'secretkey', (err, userInfo) => {
+  jwt.verify(token, "secretkey", (err, userInfo) => {
     const q =
       postId === undefined
-        ? 'SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId, a.addedAt FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id'
-        : 'SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId, a.addedAt FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id WHERE a.id = ?'
+        ? "SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId, a.addedAt FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id"
+        : "SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, u.username, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId, a.addedAt, u.telefon, u.img as avatar FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id JOIN users u ON a.userId = u.id WHERE a.id = ?";
 
-    const values = postId === undefined ? [] : [postId]
+    const values = postId === undefined ? [] : [postId];
 
     db.query(q, [values], (err, data) => {
-      if (err) return res.status(500).json(err)
-      return res.status(200).json(data)
-    })
-  })
-}
+      if (err) return res.status(500).json(err);
+      return res.status(200).json(data);
+    });
+  });
+};
 
 export const getAuctionsByUser = (req, res) => {
-  const token = req.cookies.accessToken
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
-  jwt.verify(token, 'secretkey', (err, userInfo) => {
+  jwt.verify(token, "secretkey", (err, userInfo) => {
     const q =
-      'SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id WHERE a.userId = ?'
+      "SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id WHERE a.userId = ?";
 
     db.query(q, [userInfo.id], (err, data) => {
-      if (err) return res.status(500).json(err)
-      return res.status(200).json(data)
-    })
-  })
-}
+      if (err) return res.status(500).json(err);
+      return res.status(200).json(data);
+    });
+  });
+};
 
 export const deleteAuction = (req, res) => {
-  const token = req.cookies.accessToken
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
-  jwt.verify(token, 'secretkey', (err, userInfo) => {
-    if (err) return res.status(401).json('Nieprawidłowy token')
-    const q = 'DELETE FROM auctions WHERE `userId` = ? AND `id` = ?'
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(401).json("Nieprawidłowy token");
+    const q = "DELETE FROM auctions WHERE `userId` = ? AND `id` = ?";
 
     db.query(q, [userInfo.id, req.params.auctionId], (err, data) => {
-      if (err) return res.status(500).json(err)
+      if (err) return res.status(500).json(err);
 
-      return res.status(200).json(data)
-    })
-  })
-}
+      return res.status(200).json(data);
+    });
+  });
+};
 
 export const updateAuction = async (req, res) => {
-  const token = req.cookies.accessToken
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
   try {
-    const userInfo = jwt.verify(token, 'secretkey')
+    const userInfo = jwt.verify(token, "secretkey");
 
-    const files = req.files
-    if (!files) return res.status(401).json('brak files')
-    const uploadedFileNames = []
+    const files = req.files;
+    if (!files) return res.status(401).json("brak files");
+    const uploadedFileNames = [];
 
     if (files.length > 0) {
       for (const file of files) {
         const uniqueFileName =
-          Date.now() + '-' + Math.round(Math.random() * 1e9)
+          Date.now() + "-" + Math.round(Math.random() * 1e9);
 
-        const upload = '../frontend/public/upload/'
+        const upload = "../frontend/public/upload/";
 
         const highResFilePath =
-          upload + uniqueFileName + '_high' + path.extname(file.originalname)
-        await sharp(file.path).resize(1800, 1200).toFile(highResFilePath)
+          upload + uniqueFileName + "_high" + path.extname(file.originalname);
+        await sharp(file.path).resize(1800, 1200).toFile(highResFilePath);
 
         const lowResFilePath =
-          upload + uniqueFileName + '_low' + path.extname(file.originalname)
-        await sharp(file.path).resize(702, 468).toFile(lowResFilePath)
+          upload + uniqueFileName + "_low" + path.extname(file.originalname);
+        await sharp(file.path).resize(702, 468).toFile(lowResFilePath);
 
         uploadedFileNames.push(
           path.basename(highResFilePath),
-          path.basename(lowResFilePath),
-        )
+          path.basename(lowResFilePath)
+        );
       }
     }
 
     const q =
-      'UPDATE auctions SET `brand`=?,`model`=?,`productionYear`=?,`fuelType`=?,`mileage`=?,`localization`=?,`color`=?,`startingPrice`=?,`capacity`=?,`vin`=?,`transmission`=?,`bodyStyle`=?,`interiorColor`=?,`sellerType`=?,`img`=?,`description`=?,`highlights`=?,`equipment`=?,`flaws`=? WHERE  id = ? AND userId = ?'
+      "UPDATE auctions SET `brand`=?,`model`=?,`productionYear`=?,`fuelType`=?,`mileage`=?,`localization`=?,`color`=?,`startingPrice`=?,`capacity`=?,`vin`=?,`transmission`=?,`bodyStyle`=?,`interiorColor`=?,`sellerType`=?,`img`=?,`description`=?,`highlights`=?,`equipment`=?,`flaws`=? WHERE  id = ? AND userId = ?";
 
     db.query(
       q,
@@ -182,7 +182,7 @@ export const updateAuction = async (req, res) => {
         req.body.bodyStyle,
         req.body.interiorColor,
         req.body.sellerType,
-        files.length > 0 ? uploadedFileNames.join(',') : req.body.img,
+        files.length > 0 ? uploadedFileNames.join(",") : req.body.img,
         req.body.description,
         req.body.highlights,
         req.body.equipment,
@@ -192,53 +192,53 @@ export const updateAuction = async (req, res) => {
       ],
       (err, data) => {
         if (err) {
-          console.error(err)
-          return res.status(500).json(err)
+          console.error(err);
+          return res.status(500).json(err);
         }
-        return res.status(200).json(data)
-      },
-    )
+        return res.status(200).json(data);
+      }
+    );
   } catch (error) {
-    console.error(error)
-    return res.status(401).json('Wystąpił błąd podczas weryfikacji tokenu.')
+    console.error(error);
+    return res.status(401).json("Wystąpił błąd podczas weryfikacji tokenu.");
   }
-}
+};
 
 export const searchAuctions = (req, res) => {
-  const search = req.query.search
+  const search = req.query.search;
 
-  const token = req.cookies.accessToken
+  const token = req.cookies.accessToken;
 
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
-  jwt.verify(token, 'secretkey', (err, userInfo) => {
-    if (err) return res.status(401).json('Nieprawidłowy token')
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(401).json("Nieprawidłowy token");
 
     const q =
-      'SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id WHERE m.modelName LIKE ? OR b.brandName LIKE ?'
+      "SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName, a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin, a.transmission, a.bodyStyle, a.interiorColor, a.sellerType, a.description, a.highlights, a.equipment, a.flaws, a.img, a.userId FROM auctions a JOIN models m ON a.model = m.id JOIN brands b ON m.idBrand = b.id WHERE m.modelName LIKE ? OR b.brandName LIKE ?";
 
     db.query(q, [`%${search}%`, `%${search}%`], (err, data) => {
       if (err) {
-        return res.status(500).json(err)
+        return res.status(500).json(err);
       }
 
       // Zwróć wyniki wyszukiwania
-      res.status(200).json(data)
-    })
-  })
-}
+      res.status(200).json(data);
+    });
+  });
+};
 
 export const filterAuctions = (req, res) => {
-  let filterObject = JSON.parse(req.query.filter)
+  let filterObject = JSON.parse(req.query.filter);
 
-  const token = req.cookies.accessToken
+  const token = req.cookies.accessToken;
 
-  if (!token) return res.status(401).json('Nie jesteś zalogowany')
+  if (!token) return res.status(401).json("Nie jesteś zalogowany");
 
-  jwt.verify(token, 'secretkey', (err, userInfo) => {
-    if (err) return res.status(401).json('Nieprawidłowy token')
+  jwt.verify(token, "secretkey", (err, userInfo) => {
+    if (err) return res.status(401).json("Nieprawidłowy token");
 
-    const queryParams = []
+    const queryParams = [];
     let q = `
       SELECT a.id, b.id as brandId, m.id as modelId, a.productionYear, m.modelName, b.brandName,
       a.fuelType, a.mileage, a.localization, a.color, a.startingPrice, a.capacity, a.vin,
@@ -247,30 +247,30 @@ export const filterAuctions = (req, res) => {
       FROM auctions a
       JOIN models m ON a.model = m.id
       JOIN brands b ON m.idBrand = b.id
-      WHERE 1=1`
+      WHERE 1=1`;
 
     if (filterObject.bodyStyle) {
-      q += ' AND a.bodyStyle = ?'
-      queryParams.push(filterObject.bodyStyle)
+      q += " AND a.bodyStyle = ?";
+      queryParams.push(filterObject.bodyStyle);
     }
 
     if (filterObject.transmission) {
-      q += ' AND a.transmission = ?'
-      queryParams.push(filterObject.transmission)
+      q += " AND a.transmission = ?";
+      queryParams.push(filterObject.transmission);
     }
 
     if (filterObject.fuelType) {
-      q += ' AND a.fuelType = ?'
-      queryParams.push(filterObject.fuelType)
+      q += " AND a.fuelType = ?";
+      queryParams.push(filterObject.fuelType);
     }
 
     db.query(q, queryParams, (err, data) => {
       if (err) {
-        return res.status(500).json(err)
+        return res.status(500).json(err);
       }
 
       // Zwróć wyniki wyszukiwania
-      res.status(200).json(data)
-    })
-  })
-}
+      res.status(200).json(data);
+    });
+  });
+};

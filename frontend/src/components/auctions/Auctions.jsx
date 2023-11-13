@@ -13,13 +13,23 @@ const Auctions = () => {
   const userId = JSON.parse(localStorage.getItem("user")).id;
 
   const { searchValue } = useNavbarContext();
+  const [brandId, setBrandId] = useState("");
+  const [brands, setBrands] = useState(null);
+  const [models, setModels] = useState(null);
   const [searchData, setSearchData] = useState();
   const [filterData, setFilterData] = useState();
+  const [filterActive, setFilterActive] = useState(false);
   const [isFunctionExecuting, setIsFunctionExecuting] = useState(false);
   const [filter, setFilter] = useState({
     bodyStyle: "",
     transmission: "",
     fuelType: "",
+    brand: "",
+    model: "",
+    localization: "",
+    mileage: "",
+    capacity: "",
+    startingPrice: "",
   });
 
   const handleChange = (e) => {
@@ -86,6 +96,10 @@ const Auctions = () => {
     refetchLiked();
   }, [location.pathname, isFunctionExecuting]);
 
+  useEffect(() => {
+    setFilterActive(false);
+  }, [location.pathname]);
+
   const liked =
     likedAuctions &&
     likedAuctions.map((item) => {
@@ -95,6 +109,58 @@ const Auctions = () => {
     });
 
   const array = [];
+
+  const showFiltersFunction = () => {
+    setFilterActive(!filterActive);
+    filter.brand = "";
+    filter.model = "";
+    filter.localization = "";
+    filter.mileage = "";
+    filter.capacity = "";
+    filter.startingPrice = "";
+  };
+
+  const fetchBrands = async () => {
+    try {
+      const res = await axios.get("http://localhost:8800/api/brands", {
+        withCredentials: true,
+      });
+      setBrands(res.data);
+    } catch (err) {
+      console.log(err.response.data);
+    }
+  };
+
+  const selectId = (e) => {
+    setBrandId(e.target.value);
+  };
+
+  const fetchModels = async () => {
+    try {
+      const res = await axios.get(
+        "http://localhost:8800/api/brands/models?brandId=" + brandId,
+        {
+          withCredentials: "true",
+        }
+      );
+      setModels(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  let PLN = new Intl.NumberFormat("pl-PL", {
+    style: "currency",
+    currency: "PLN",
+  });
+
+  useEffect(() => {
+    fetchBrands();
+  }, []);
+
+  useEffect(() => {
+    fetchModels();
+  }, [brandId]);
 
   return (
     <div
@@ -135,8 +201,112 @@ const Auctions = () => {
             <option value="benzyna">Benzyna</option>
             <option value="diesel">Diesel</option>
           </select>
+
+          <button
+            onClick={showFiltersFunction}
+            className="auctions__filter-btn"
+          >
+            Więcej filtrów
+          </button>
         </div>
       </div>
+
+      {filterActive && (
+        <div
+          style={{
+            borderTop: "1px solid rgb(240, 240, 240)",
+            paddingTop: "10px",
+            paddingBottom: "15px",
+          }}
+          className="auctions__auction-selector-container"
+        >
+          <select name="brand" onChange={handleChange} onClick={selectId}>
+            <option selected disabled>
+              Marka
+            </option>
+            {brands &&
+              brands.map((item) => {
+                return <option value={item.id}>{item.brandName}</option>;
+              })}
+          </select>
+
+          <select name="model" onChange={handleChange}>
+            <option selected disabled value="volvo">
+              Model
+            </option>
+            {models &&
+              models.map((item) => {
+                return <option value={item.id}>{item.modelName}</option>;
+              })}
+          </select>
+
+          <input
+            id="localization"
+            name="localization"
+            type="text"
+            onChange={handleChange}
+            placeholder="Lokalizacja"
+          />
+        </div>
+      )}
+
+      {filterActive && (
+        <div
+          style={{
+            paddingBottom: "10px",
+            gap: "10px",
+            justifyContent: "flex-start",
+          }}
+          className="auctions__auction-selector-container"
+        >
+          <div className="auctions__label-container">
+            <div className="auctions__label">
+              <label for="mileage">
+                Przebieg do - {filter.mileage.toString().slice(0, -3)} tyś. km
+              </label>
+            </div>
+            <input
+              id="mileage"
+              name="mileage"
+              type="range"
+              min={0}
+              max={500000}
+              step="10000"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="auctions__label-container">
+            <div className="auctions__label">
+              <label for="capacity">Pojemność do - {filter.capacity} cm³</label>
+            </div>
+            <input
+              id="capacity"
+              name="capacity"
+              min={1000}
+              max={8000}
+              step="500"
+              type="range"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="auctions__label-container">
+            <div className="auctions__label">
+              <label for="startingPrice">
+                Cena do - {PLN.format(filter.startingPrice)}
+              </label>
+            </div>
+            <input
+              id="startingPrice"
+              name="startingPrice"
+              min={0}
+              max={1000000}
+              step="5000"
+              type="range"
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+      )}
 
       <div className="auctions__container">
         {isLoading
@@ -145,7 +315,8 @@ const Auctions = () => {
           ? "Wystąpił błąd"
           : (() => {
               let filteredData = data;
-
+              console.log(filteredData);
+              console.log(filter.brand);
               if (searchValue) {
                 filteredData = data.filter(
                   (item) =>
@@ -164,7 +335,14 @@ const Auctions = () => {
 
               if (
                 filter &&
-                (filter.transmission || filter.bodyStyle || filter.fuelType)
+                (filter.transmission ||
+                  filter.bodyStyle ||
+                  filter.fuelType ||
+                  filter.startingPrice ||
+                  filter.brand ||
+                  filter.localization ||
+                  filter.capacity ||
+                  filter.mileage)
               ) {
                 if (filter.transmission) {
                   filteredData = filteredData.filter(
@@ -187,6 +365,47 @@ const Auctions = () => {
                     (item) =>
                       item.fuelType.toLowerCase() ===
                       filter.fuelType.toLowerCase()
+                  );
+                }
+
+                if (filter.brand) {
+                  filteredData = filteredData.filter(
+                    (item) => item.brandId === parseInt(filter.brand)
+                  );
+                }
+
+                if (filter.model) {
+                  filteredData = filteredData.filter(
+                    (item) => item.modelId === parseInt(filter.model)
+                  );
+                }
+
+                if (filter.capacity) {
+                  filteredData = filteredData.filter(
+                    (item) =>
+                      parseInt(item.capacity) <= parseInt(filter.capacity)
+                  );
+                }
+
+                if (filter.localization) {
+                  filteredData = filteredData.filter((item) =>
+                    item.localization
+                      .toLowerCase()
+                      .includes(filter.localization.toLocaleLowerCase())
+                  );
+                }
+
+                if (filter.startingPrice) {
+                  filteredData = filteredData.filter(
+                    (item) =>
+                      parseInt(item.startingPrice) <=
+                      parseInt(filter.startingPrice)
+                  );
+                }
+
+                if (filter.mileage) {
+                  filteredData = filteredData.filter(
+                    (item) => item.mileage <= filter.mileage
                   );
                 }
               }
@@ -215,11 +434,6 @@ const Auctions = () => {
               //     </div>
               //   ));
               // }
-
-              let PLN = new Intl.NumberFormat("pl-PL", {
-                style: "currency",
-                currency: "PLN",
-              });
 
               if (location.pathname === "/favourite") {
                 filteredData = filteredData.filter((element) =>

@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import "./Register.scss";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Register = () => {
   const [inputs, setInputs] = useState({
@@ -9,13 +10,14 @@ const Register = () => {
     password: "",
     username: "",
     email: "",
-    telefon: "",
   });
 
   const navigate = useNavigate();
-
+  const updatedFormData = new FormData();
+  const queryClient = useQueryClient();
   const [err, setErr] = useState(null);
   const [response, setResponse] = useState(null);
+  const [files, setFiles] = useState([]);
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -23,21 +25,77 @@ const Register = () => {
 
   const handleClick = async (e) => {
     e.preventDefault();
+    mutation.mutate(updatedFormData);
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8800/api/auth/register",
-        inputs
-      );
+    // for (const key in inputs) {
+    //   updatedFormData.append(key, inputs[key]);
+    // }
+    // for (let i = 0; i < files.length; i++) {
+    //   updatedFormData.append("images", files[i]);
+    // }
 
-      setResponse(response.data);
-      setErr(null);
-      navigate("/login");
-    } catch (err) {
-      setErr(err.response.data);
-      setResponse(null);
-    }
+    // try {
+    //   const response = await axios.post(
+    //     "http://localhost:8800/api/auth/register",
+    //     updatedFormData,
+    //     {
+    //       withCredentials: true,
+    //       headers: {
+    //         "Content-Type": "multipart/form-data",
+    //       },
+    //     }
+    //   );
+
+    //   setResponse(response.data);
+    //   setErr(null);
+    //   navigate("/login");
+    // } catch (err) {
+    //   setErr(err.response.data);
+    //   setResponse(null);
+    // }
   };
+
+  const mutation = useMutation(
+    (updatedFormData) => {
+      for (const key in inputs) {
+        updatedFormData.append(key, inputs[key]);
+      }
+
+      for (let i = 0; i < files.length; i++) {
+        updatedFormData.append("image", files[i]);
+      }
+
+      axios
+        .post("http://localhost:8800/api/auth/register", updatedFormData, {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          setResponse(res.data);
+          navigate("/login");
+        })
+        .catch((err) => {
+          setResponse(err.response.data);
+        });
+    },
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(["user"]);
+        // navigate("/login");
+      },
+    }
+  );
+
+  const handleFileChange = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const selectedFiles = e.target.files;
+    setFiles(selectedFiles);
+  };
+  console.log(files);
 
   return (
     <div className="register">
@@ -103,12 +161,23 @@ const Register = () => {
                 onChange={handleChange}
               />
             </div>
+            <div className="register__input-container">
+              <h3>Wybierz swój avatar</h3>
+              <div className="register__input-label">
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  id="fileInput"
+                  onChange={handleFileChange}
+                />
+              </div>
+            </div>
+
             <button onClick={handleClick}>Zarejestruj</button>
           </form>
         </div>
-        <div className="register__response">
-          {err ? err : response ? response : ""}
-        </div>
+        <div className="register__response">{response ? response : ""}</div>
 
         <div className="register__register-href">
           <p>

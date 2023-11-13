@@ -22,8 +22,7 @@ const Auction = () => {
   const [comment, setComment] = useState("");
 
   const userId = JSON.parse(localStorage.getItem("user")).id;
-  const userName = JSON.parse(localStorage.getItem("user")).username;
-  const telefon = JSON.parse(localStorage.getItem("user")).telefon;
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -86,7 +85,7 @@ const Auction = () => {
     }));
   }, [data]);
 
-  console.log(inputs);
+  console.log(data && data[0]);
 
   const { data: user } = useQuery(["user"], () =>
     axios
@@ -343,8 +342,6 @@ const Auction = () => {
         })
   );
 
-  console.log({ commentsData: commentsData });
-
   const { data: likesData, refetch: refetchLikesData } = useQuery(
     ["likes"],
     () =>
@@ -401,7 +398,7 @@ const Auction = () => {
       element.innerHTML = "Zadzwoń";
     } else {
       element.classList.add("active");
-      element.innerHTML = telefon;
+      element.innerHTML = data && data[0].telefon;
     }
   };
 
@@ -799,7 +796,21 @@ const Auction = () => {
                 </tbody>
               </table>
               <div className="auction__description">
-                <h1>{userName}</h1>
+                <div className="auction__description-img-container">
+                  <div className="auction__description-img">
+                    <img
+                      src={
+                        "/upload/" +
+                        (data[0].avatar === "brak"
+                          ? "no-avatar.jpg"
+                          : data[0].avatar.split(",")[0])
+                      }
+                      alt="avatar"
+                    />
+                  </div>
+                  <h1>{data[0].username}</h1>
+                </div>
+
                 {(edit && (
                   <textarea
                     placeholder={data && data[0].description}
@@ -919,43 +930,56 @@ const Auction = () => {
                       );
 
                       return (
-                        <div className="auction__comments-item">
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "8px",
-                            }}
-                          >
-                            <div>
-                              <h3>{item.username}</h3>
-                            </div>
-
-                            {item.idUser === data[0].userId && (
-                              <div className="auction__comments-icon-owner">
-                                <AiOutlineStar />
-                              </div>
-                            )}
-
+                        <div className="auction__comment-element-container">
+                          <div className="auction__comment-img-container">
+                            <img
+                              src={
+                                "/upload/" +
+                                (item.avatar === "brak"
+                                  ? "no-avatar.jpg"
+                                  : item.avatar.split(",")[0])
+                              }
+                              alt="avatar"
+                            />
+                          </div>
+                          <div className="auction__comments-item">
                             <div
                               style={{
                                 display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
+                                gap: "8px",
                               }}
                             >
-                              <div style={{ marginTop: "15.2px" }}>
-                                {filteredLikesData.length}
+                              <div>
+                                <h3>{item.username}</h3>
                               </div>
+
+                              {item.idUser === data[0].userId && (
+                                <div className="auction__comments-icon-owner">
+                                  <AiOutlineStar />
+                                </div>
+                              )}
+
                               <div
-                                onClick={() => handleLike(item.id)}
-                                className="auction__comments-icon-like"
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
                               >
-                                <AiOutlineLike />
+                                <div style={{ marginTop: "15.2px" }}>
+                                  {filteredLikesData.length}
+                                </div>
+                                <div
+                                  onClick={() => handleLike(item.id)}
+                                  className="auction__comments-icon-like"
+                                >
+                                  <AiOutlineLike />
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          <p>{item.comment}</p>
+                            <p>{item.comment}</p>
+                          </div>
                         </div>
                       );
                     })}
