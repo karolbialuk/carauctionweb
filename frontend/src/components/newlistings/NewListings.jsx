@@ -64,7 +64,7 @@ const NewListings = () => {
                         {JSON.parse(item.highlights)
                           .slice(0, 4)
                           .map((item) => {
-                            return item + ", ";
+                            return item + " ";
                           })}
                       </p>
                       <ul>

@@ -372,12 +372,7 @@ const AddAuction = () => {
             <h3>Najważniejsze informacje</h3>
             <div className="addauction__form-item-list">
               <label for="highlightInput">
-                <input
-                  maxLength={40}
-                  id="highlightInput"
-                  name="highlights"
-                  type="text"
-                />
+                <input id="highlightInput" name="highlights" type="text" />
                 <button
                   id="highlightInput"
                   type="button"

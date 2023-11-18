@@ -23,7 +23,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const img =
-    JSON.parse(localStorage.getItem("user")) &&
+    JSON.parse(localStorage.getItem("user")).img &&
     JSON.parse(localStorage.getItem("user")).img.split(",")[0];
 
   console.log(img);

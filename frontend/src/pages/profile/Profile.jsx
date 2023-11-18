@@ -32,6 +32,38 @@ const Profile = () => {
     setFiles(selectedFiles);
   };
 
+  useEffect(() => {
+    if (mail) {
+      setPass(false);
+      setUser(false);
+      setInputs((prevInputs) => ({
+        ...prevInputs,
+        password: "",
+        username: "",
+      }));
+    }
+
+    if (pass) {
+      setMail(false);
+      setUser(false);
+      setInputs((prevInputs) => ({
+        ...prevInputs,
+        email: "",
+        username: "",
+      }));
+    }
+
+    if (user) {
+      setMail(false);
+      setPass(false);
+      setInputs((prevInputs) => ({
+        ...prevInputs,
+        email: "",
+        password: "",
+      }));
+    }
+  }, [mail, pass, user]);
+
   const logout = () => {
     localStorage.removeItem("user");
     window.location.reload();
