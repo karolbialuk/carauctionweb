@@ -129,7 +129,7 @@ const AddAuction = () => {
       for (let i = 0; i < files.length; i++) {
         updatedFormData.append("images", files[i]);
       }
-      return axios.post("http://localhost:8800/api/auctions", updatedFormData, {
+      return axios.post("http://bialuk.pl:8800/api/auctions", updatedFormData, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
@@ -159,7 +159,7 @@ const AddAuction = () => {
 
   const fetchBrands = async () => {
     try {
-      const res = await axios.get("http://localhost:8800/api/brands", {
+      const res = await axios.get("http://bialuk.pl:8800/api/brands", {
         withCredentials: true,
       });
       setBrands(res.data);
@@ -175,7 +175,7 @@ const AddAuction = () => {
   const fetchModels = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8800/api/brands/models?brandId=" + brandId,
+        "http://bialuk.pl:8800/api/brands/models?brandId=" + brandId,
         {
           withCredentials: "true",
         }

@@ -66,7 +66,7 @@ const Register = () => {
       }
 
       axios
-        .post("http://localhost:8800/api/auth/register", updatedFormData, {
+        .post("http://bialuk.pl:8800/api/auth/register", updatedFormData, {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",

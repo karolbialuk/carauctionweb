@@ -50,7 +50,7 @@ const Auctions = () => {
       auctionId,
     };
     try {
-      await axios.post("http://localhost:8800/api/favourites/like", inputs, {
+      await axios.post("http://bialuk.pl:8800/api/favourites/like", inputs, {
         withCredentials: true,
       });
     } catch (err) {
@@ -61,8 +61,8 @@ const Auctions = () => {
 
   const apiPath =
     location.pathname === "/" || location.pathname === "/favourite"
-      ? "http://localhost:8800/api/auctions"
-      : "http://localhost:8800/api/auctions/myauctions";
+      ? "http://bialuk.pl:8800/api/auctions"
+      : "http://bialuk.pl:8800/api/auctions/myauctions";
 
   const myauctionsPath = location.pathname === "/myauctions";
   const homePath = location.pathname === "/";
@@ -83,7 +83,7 @@ const Auctions = () => {
     ["likedAuctions"],
     () =>
       axios
-        .get("http://localhost:8800/api/favourites", {
+        .get("http://bialuk.pl:8800/api/favourites", {
           withCredentials: true,
         })
         .then((res) => {
@@ -122,7 +122,7 @@ const Auctions = () => {
 
   const fetchBrands = async () => {
     try {
-      const res = await axios.get("http://localhost:8800/api/brands", {
+      const res = await axios.get("http://bialuk.pl:8800/api/brands", {
         withCredentials: true,
       });
       setBrands(res.data);
@@ -138,7 +138,7 @@ const Auctions = () => {
   const fetchModels = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8800/api/brands/models?brandId=" + brandId,
+        "http://bialuk.pl:8800/api/brands/models?brandId=" + brandId,
         {
           withCredentials: "true",
         }

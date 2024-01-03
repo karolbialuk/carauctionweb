@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const NewListings = () => {
   const { isLoading, data, error } = useQuery(["actions"], () =>
     axios
-      .get("http://localhost:8800/api/auctions", {
+      .get("http://bialuk.pl:8800/api/auctions", {
         withCredentials: true,
       })
       .then((res) => {

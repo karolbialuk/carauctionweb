@@ -51,7 +51,7 @@ const Auction = () => {
 
   const { isLoading, data, error } = useQuery(["auctions"], () =>
     axios
-      .get("http://localhost:8800/api/auctions?postId=" + id, {
+      .get("http://bialuk.pl:8800/api/auctions?postId=" + id, {
         withCredentials: true,
       })
       .then((res) => {
@@ -89,7 +89,7 @@ const Auction = () => {
 
   const { data: user } = useQuery(["user"], () =>
     axios
-      .get("http://localhost:8800/api/auth?userId=" + 52, {
+      .get("http://bialuk.pl:8800/api/auth?userId=" + 52, {
         withCredentials: true,
       })
       .then((res) => {
@@ -112,7 +112,7 @@ const Auction = () => {
 
   const mutation = useMutation(
     (auctionId) => {
-      return axios.delete("http://localhost:8800/api/auctions/" + auctionId, {
+      return axios.delete("http://bialuk.pl:8800/api/auctions/" + auctionId, {
         withCredentials: true,
       });
     },
@@ -159,7 +159,7 @@ const Auction = () => {
     }
 
     return axios.put(
-      "http://localhost:8800/api/auctions",
+      "http://bialuk.pl:8800/api/auctions",
       updatedFormData,
 
       {
@@ -197,7 +197,7 @@ const Auction = () => {
       };
 
       axios
-        .post("http://localhost:8800/api/comments/add", inputs, {
+        .post("http://bialuk.pl:8800/api/comments/add", inputs, {
           withCredentials: true,
         })
         .then(() => {
@@ -213,7 +213,7 @@ const Auction = () => {
       idComment,
     };
     axios
-      .post("http://localhost:8800/api/likes/like", inputs, {
+      .post("http://bialuk.pl:8800/api/likes/like", inputs, {
         withCredentials: true,
       })
       .then((res) => {
@@ -223,7 +223,7 @@ const Auction = () => {
 
   const fetchBrands = async () => {
     try {
-      const res = await axios.get("http://localhost:8800/api/brands", {
+      const res = await axios.get("bialuk.pl:8800/api/brands", {
         withCredentials: true,
       });
       setBrands(res.data);
@@ -239,7 +239,7 @@ const Auction = () => {
   const fetchModels = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8800/api/brands/models?brandId=" + brandId,
+        "http://bialuk.pl:8800/api/brands/models?brandId=" + brandId,
         {
           withCredentials: "true",
         }
@@ -322,7 +322,7 @@ const Auction = () => {
     ["likedAuctions"],
     () =>
       axios
-        .get("http://localhost:8800/api/favourites", {
+        .get("http://bialuk.pl:8800/api/favourites", {
           withCredentials: true,
         })
         .then((res) => {
@@ -334,7 +334,7 @@ const Auction = () => {
     ["comments"],
     () =>
       axios
-        .get("http://localhost:8800/api/comments?idAuction=" + id, {
+        .get("http://bialuk.pl:8800/api/comments?idAuction=" + id, {
           withCredentials: true,
         })
         .then((res) => {
@@ -346,7 +346,7 @@ const Auction = () => {
     ["likes"],
     () =>
       axios
-        .get("http://localhost:8800/api/likes", {
+        .get("http://bialuk.pl:8800/api/likes", {
           withCredentials: true,
         })
         .then((res) => {
@@ -382,7 +382,7 @@ const Auction = () => {
       auctionId,
     };
     try {
-      await axios.post("http://localhost:8800/api/favourites/like", inputs, {
+      await axios.post("http://bialuk.pl:8800/api/favourites/like", inputs, {
         withCredentials: true,
       });
     } catch (err) {

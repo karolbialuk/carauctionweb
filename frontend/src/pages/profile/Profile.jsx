@@ -105,7 +105,7 @@ const Profile = () => {
       }
 
       axios
-        .put("http://localhost:8800/api/auth", updatedFormData, {
+        .put("bialuk.pl:8800/api/auth", updatedFormData, {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
@@ -131,7 +131,7 @@ const Profile = () => {
   const deleteMutation = useMutation(
     () => {
       axios
-        .delete("http://localhost:8800/api/auth/delete?userId=" + userId, {
+        .delete("http://bialuk.pl:8800/api/auth/delete?userId=" + userId, {
           withCredentials: true,
         })
         .then((res) => {

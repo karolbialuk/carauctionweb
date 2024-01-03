@@ -22,7 +22,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8800/api/auth/login",
+        "http://bialuk.pl:8800/api/auth/login",
         inputs,
         {
           withCredentials: true,
